@@ -30,7 +30,7 @@ const History = () => {
           const dummyHistory = Array.from({ length: 15 }, (_, i) => ({
             id: i + 1,
             name: `Video ${i + 1}`,
-            previewUrl: `https://picsum.photos/200/100?random=${i}`, // Using picsum for dummy previews
+            previewUrl: `https://source.unsplash.com/200x100?camera&random=${i}`, // Using unsplash for dummy previews
             timestamp: new Date(
               new Date().setDate(new Date().getDate() - i)
             ).toISOString(),
