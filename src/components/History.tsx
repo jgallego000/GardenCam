@@ -80,6 +80,17 @@ const History = () => {
     return dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
   };
 
+  const formatDate = (date: Date): string => {
+    const day = date.getDate();
+    return `${day}`;
+  };
+
+  const isWeekend = (date: Date): boolean => {
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6; // 0: Sunday, 6: Saturday
+  };
+
+
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-xl mb-2">History</h2>
@@ -107,12 +118,17 @@ const History = () => {
               return (
                 <div
                   key={index}
-                  className={`w-4 h-4 rounded-full ${isRecordingDay
-                    ? "bg-teal-500"
-                    : "bg-gray-300"
-                    }`}
-                  title={date.toLocaleDateString()}
-                />
+                  className="flex flex-col items-center"
+                >
+                  <div
+                    className={`w-6 h-4 rounded-full ${isRecordingDay
+                      ? "bg-teal-500"
+                      : "bg-gray-300"} ${isWeekend(date) ? "border-2 border-red-500" : ""
+                      }`}
+                    title={date.toLocaleDateString()}
+                  />
+                  <span className="text-xs">{formatDate(date)}</span>
+                </div>
               );
             })}
           </div>
@@ -139,5 +155,3 @@ const History = () => {
 };
 
 export default History;
-
-    
