@@ -82,7 +82,15 @@ const History = () => {
 
   const formatDate = (date: Date): string => {
     const day = date.getDate();
-    return `${day}`;
+    const month = date.getMonth() + 1; // Months are 0-indexed
+    return `${day}/${month}`;
+  };
+
+  const formatDateTitle = (date: Date): string => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const isWeekend = (date: Date): boolean => {
@@ -125,7 +133,7 @@ const History = () => {
                       ? "bg-teal-500"
                       : "bg-gray-300"} ${isWeekend(date) ? "border-2 border-red-500" : ""
                       }`}
-                    title={date.toLocaleDateString('es-ES')}
+                    title={formatDateTitle(date)}
                   />
                   <span className="text-xs">{formatDate(date)}</span>
                 </div>
@@ -145,7 +153,13 @@ const History = () => {
               className="rounded-md shadow-md transition-transform transform hover:scale-105"
             />
             <span className="absolute bottom-2 left-2 text-sm text-white bg-gray-800 bg-opacity-60 px-2 py-1 rounded-md">
-              {getDayOfWeekInSpanish(video.timestamp)} - {video.timestamp}
+              {getDayOfWeekInSpanish(video.timestamp)} - {new Date(video.timestamp).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </span>
           </div>
         ))}
