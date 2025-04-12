@@ -125,7 +125,7 @@ const History = () => {
                       ? "bg-teal-500"
                       : "bg-gray-300"} ${isWeekend(date) ? "border-2 border-red-500" : ""
                       }`}
-                    title={date.toLocaleDateString()}
+                    title={date.toLocaleDateString('es-ES')}
                   />
                   <span className="text-xs">{formatDate(date)}</span>
                 </div>
