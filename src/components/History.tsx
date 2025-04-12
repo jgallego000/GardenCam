@@ -4,14 +4,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from 'next/image';
 
 const History = () => {
   const { toast } = useToast();
   const [videoHistory, setVideoHistory] = useState<
-    { id: number; name: string; previewUrl: string; timestamp: string }[]
+    { id: number; name: string; previewUrl: string; timestamp: string; duration: string }[]
   >([]);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [recordingEvents, setRecordingEvents] = useState<Date[]>([]);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 6;
 
   useEffect(() => {
     // Load the video history from local storage or server
@@ -21,8 +26,20 @@ const History = () => {
         if (storedHistory) {
           setVideoHistory(JSON.parse(storedHistory));
         } else {
-          // If no history exists, initialize with empty array
-          setVideoHistory([]);
+          // Initialize with dummy data for testing purposes
+          const dummyHistory = Array.from({ length: 15 }, (_, i) => ({
+            id: i + 1,
+            name: `Video ${i + 1}`,
+            previewUrl: `https://picsum.photos/200/100?random=${i}`, // Using picsum for dummy previews
+            timestamp: new Date(
+              new Date().setDate(new Date().getDate() - i)
+            ).toISOString(),
+            duration: `${Math.floor(Math.random() * 5) + 1}:${String(
+              Math.floor(Math.random() * 60)
+            ).padStart(2, "0")}`, // Random duration between 1-5 minutes
+          }));
+          setVideoHistory(dummyHistory);
+          localStorage.setItem("videoHistory", JSON.stringify(dummyHistory));
         }
       } catch (error) {
         console.error("Failed to load video history:", error);
@@ -98,6 +115,16 @@ const History = () => {
     return dayOfWeek === 0 || dayOfWeek === 6; // 0: Sunday, 6: Saturday
   };
 
+  // Get current videos
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = videoHistory.slice(
+    indexOfFirstVideo,
+    indexOfLastVideo
+  );
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <div className="flex flex-col items-center">
@@ -145,11 +172,13 @@ const History = () => {
 
       {/* Display of Video History */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        {videoHistory.map((video) => (
+        {currentVideos.map((video) => (
           <div key={video.id} className="relative">
-            <img
+            <Image
               src={video.previewUrl}
               alt={video.name}
+              width={200}
+              height={100}
               className="rounded-md shadow-md transition-transform transform hover:scale-105"
             />
             <span className="absolute bottom-2 left-2 text-sm text-white bg-gray-800 bg-opacity-60 px-2 py-1 rounded-md">
@@ -159,9 +188,27 @@ const History = () => {
                 day: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit',
-              })}
+              })} - {video.duration}
             </span>
           </div>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+        {Array.from({
+          length: Math.ceil(videoHistory.length / videosPerPage),
+        }).map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => paginate(index + 1)}
+            className={`mx-1 px-3 py-1 rounded-md ${currentPage === index + 1
+              ? "bg-teal-500 text-white"
+              : "bg-gray-300 text-gray-700"
+              }`}
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
     </div>
