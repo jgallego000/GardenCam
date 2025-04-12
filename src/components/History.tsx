@@ -1,13 +1,13 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {useToast} from "@/hooks/use-toast";
+import {useEffect, useState} from "react";
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from 'next/image';
 
 const History = () => {
-  const { toast } = useToast();
+  const {toast} = useToast();
   const [videoHistory, setVideoHistory] = useState<
     { id: number; name: string; previewUrl: string; timestamp: string; duration: string }[]
   >([]);
@@ -19,44 +19,24 @@ const History = () => {
   const videosPerPage = 6;
 
   useEffect(() => {
-    // Load the video history from local storage or server
-    const loadVideoHistory = () => {
-      try {
-        const storedHistory = localStorage.getItem("videoHistory");
-        if (storedHistory) {
-          setVideoHistory(JSON.parse(storedHistory));
-        } else {
-          // Initialize with dummy data for testing purposes
-          const dummyHistory = Array.from({ length: 15 }, (_, i) => ({
-            id: i + 1,
-            name: `Video ${i + 1}`,
-            previewUrl: `https://source.unsplash.com/200x100?camera&random=${i}`, // Using unsplash for dummy previews
-            timestamp: new Date(
-              new Date().setDate(new Date().getDate() - i)
-            ).toISOString(),
-            duration: `${Math.floor(Math.random() * 5) + 1}:${String(
-              Math.floor(Math.random() * 60)
-            ).padStart(2, "0")}`, // Random duration between 1-5 minutes
-          }));
-          setVideoHistory(dummyHistory);
-          localStorage.setItem("videoHistory", JSON.stringify(dummyHistory));
-        }
-      } catch (error) {
-        console.error("Failed to load video history:", error);
-        toast({
-          variant: "destructive",
-          title: "Load Failed",
-          description: "Failed to load video history.",
-        });
-        setVideoHistory([]); // Ensure state is an empty array in case of error
-      }
-    };
 
-    loadVideoHistory();
+    // Initialize with dummy data for testing purposes
+    const dummyHistory = Array.from({length: 15}, (_, i) => ({
+      id: i + 1,
+      name: `Video ${i + 1}`,
+      previewUrl: `https://placehold.co/200x100?text=Video${i + 1}`, // Using placehold for dummy previews
+      timestamp: new Date(
+        new Date().setDate(new Date().getDate() - i)
+      ).toISOString(),
+      duration: `${Math.floor(Math.random() * 5) + 1}:${String(
+        Math.floor(Math.random() * 60)
+      ).padStart(2, "0")}`, // Random duration between 1-5 minutes
+    }));
+    setVideoHistory(dummyHistory);
 
     const getCameraPermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({video: true});
         setHasCameraPermission(true);
       } catch (error) {
         console.error("Error accessing camera:", error);
@@ -93,7 +73,7 @@ const History = () => {
   // Function to get the day of the week in Spanish
   const getDayOfWeekInSpanish = (dateString: string) => {
     const date = new Date(dateString);
-    const dayOfWeek = date.toLocaleDateString("es-ES", { weekday: "long" });
+    const dayOfWeek = date.toLocaleDateString("es-ES", {weekday: "long"});
     return dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
   };
 
@@ -143,7 +123,7 @@ const History = () => {
         <h3 className="text-lg mb-2">Recording Timeline (Last Month)</h3>
         <ScrollArea className="h-24 rounded-md">
           <div className="flex space-x-2 p-2">
-            {Array.from({ length: 30 }).map((_, index) => {
+            {Array.from({length: 30}).map((_, index) => {
               const date = new Date();
               date.setDate(date.getDate() - 30 + index);
               const isRecordingDay = recordingEvents.some(
