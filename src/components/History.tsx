@@ -3,6 +3,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const History = () => {
   const { toast } = useToast();
@@ -10,13 +11,31 @@ const History = () => {
     { id: number; name: string; previewUrl: string; timestamp: string }[]
   >([]);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  const [recordingEvents, setRecordingEvents] = useState<Date[]>([]);
 
   useEffect(() => {
-    // Fetch the video history from local storage or server
-    const storedHistory = localStorage.getItem("videoHistory");
-    if (storedHistory) {
-      setVideoHistory(JSON.parse(storedHistory));
-    }
+    // Load the video history from local storage or server
+    const loadVideoHistory = () => {
+      try {
+        const storedHistory = localStorage.getItem("videoHistory");
+        if (storedHistory) {
+          setVideoHistory(JSON.parse(storedHistory));
+        } else {
+          // If no history exists, initialize with empty array
+          setVideoHistory([]);
+        }
+      } catch (error) {
+        console.error("Failed to load video history:", error);
+        toast({
+          variant: "destructive",
+          title: "Load Failed",
+          description: "Failed to load video history.",
+        });
+        setVideoHistory([]); // Ensure state is an empty array in case of error
+      }
+    };
+
+    loadVideoHistory();
 
     const getCameraPermission = async () => {
       try {
@@ -35,6 +54,23 @@ const History = () => {
     };
 
     getCameraPermission();
+
+    // Generate dummy recording events for the last month
+    const today = new Date();
+    const lastMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() - 1,
+      today.getDate()
+    );
+    const events: Date[] = [];
+    let currentDate = new Date(lastMonth);
+    while (currentDate <= today) {
+      if (Math.random() > 0.8) {
+        events.push(new Date(currentDate));
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    setRecordingEvents(events);
   }, [toast]);
 
   // Function to get the day of the week in Spanish
@@ -55,7 +91,36 @@ const History = () => {
           </AlertDescription>
         </Alert>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      {/* Timeline of Recording Events */}
+      <div className="w-full max-w-screen-md">
+        <h3 className="text-lg mb-2">Recording Timeline (Last Month)</h3>
+        <ScrollArea className="h-24 rounded-md">
+          <div className="flex space-x-2 p-2">
+            {Array.from({ length: 30 }).map((_, index) => {
+              const date = new Date();
+              date.setDate(date.getDate() - 30 + index);
+              const isRecordingDay = recordingEvents.some(
+                (event) =>
+                  event.toDateString() === date.toDateString()
+              );
+              return (
+                <div
+                  key={index}
+                  className={`w-4 h-4 rounded-full ${isRecordingDay
+                    ? "bg-teal-500"
+                    : "bg-gray-300"
+                    }`}
+                  title={date.toLocaleDateString()}
+                />
+              );
+            })}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Display of Video History */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         {videoHistory.map((video) => (
           <div key={video.id} className="relative">
             <img
@@ -74,3 +139,5 @@ const History = () => {
 };
 
 export default History;
+
+    
