@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const CameraConnection = () => {
-  const [ipAddress, setIpAddress] = useState('');
+  const [ipAddress, setIpAddress] = useState(process.env.NEXT_PUBLIC_CAMERA_IP || '');
+
+  useEffect(() => {
+    // Initialize with the environment variable value on mount
+    if (process.env.NEXT_PUBLIC_CAMERA_IP) {
+      setIpAddress(process.env.NEXT_PUBLIC_CAMERA_IP);
+    }
+  }, []);
 
   const handleConnect = () => {
     // TODO: Implement the connection logic here
