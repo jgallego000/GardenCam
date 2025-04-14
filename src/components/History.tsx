@@ -24,7 +24,7 @@ const History = () => {
     const dummyHistory = Array.from({length: 15}, (_, i) => ({
       id: i + 1,
       name: `Video ${i + 1}`,
-      previewUrl: `https://placehold.co/200x100?text=Video${i + 1}`, // Using placehold for dummy previews
+      previewUrl: `https://placehold.co/200x100?text=WiFi+Cam`, // Using placehold for dummy previews
       timestamp: new Date(
         new Date().setDate(new Date().getDate() - i)
       ).toISOString(),
