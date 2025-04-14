@@ -16,7 +16,7 @@ const LiveFeed = () => {
     <div className="flex flex-col items-center">
       <h2 className="text-xl mb-2">Live Feed</h2>
       <img
-        src="https://source.unsplash.com/640x360?camera" // Placeholder image
+        src="https://source.unsplash.com/640x360/daily?camera" // Placeholder image
         alt="Live Camera Feed"
         className="rounded-md shadow-lg w-full max-w-screen-md"
       />
@@ -32,3 +32,4 @@ const LiveFeed = () => {
 };
 
 export default LiveFeed;
+
